@@ -16,34 +16,40 @@ namespace module5itog
         static (string Name, string LastName, byte Age, bool HasPet, string[] PetName, string[] Color) Anketa()
         {
             (string Name, string LastName, byte Age, bool HasPet, string[] PetName, string[] Color) anketa;
-            Console.Write("Введите Ваше имя: ");
-            anketa.Name = Console.ReadLine();
-            Console.Write("Введите Вашу фамилию: ");
-            anketa.LastName = Console.ReadLine();
-            anketa.Age = 0;
+            string name;
+            do
+            {
+                Console.Write("Введите Ваше имя: ");
+                name = Console.ReadLine();
+            }
+            while (!IsAllLetters(name));
+            anketa.Name = name;
+            string lastname;
+            do
+            {
+                Console.Write("Введите Вашу фамилию: ");
+                lastname = Console.ReadLine();
+            }
+            while (!IsAllLetters(lastname));
+            anketa.LastName = lastname;
+            int age;
             do
             {
                 Console.Write("Введите Ваш возраст: ");
-                string s = Console.ReadLine();
-                if (!IsAllDigits(s))
-                    Console.WriteLine("Это не число! Введите еще раз. ");
-                else if (Int32.Parse(s) < 1)
-                    Console.WriteLine("Число должно быть больше 0. ");
-                else
-                anketa.Age = byte.Parse(s);
+                age = Check();
             }
-            while (anketa.Age < 1);
-            
+            while (age < 1);
+            anketa.Age = Convert.ToByte(age);
             Console.Write("Есть ли у Вас домашнее животное? (да/нет): ");
-            string H;
+            string havepet;
             anketa.HasPet = true;
             do
-            { 
-                H = Console.ReadLine();
+            {
+                havepet = Console.ReadLine();
 
-                if (H == "да" | H == "нет")
+                if (havepet == "да" | havepet == "нет")
                 {
-                    if (H == "да")
+                    if (havepet == "да")
                         anketa.HasPet = true;
                     else
                         anketa.HasPet = false;
@@ -53,74 +59,88 @@ namespace module5itog
                     Console.Write("ответ может быть только да или нет. Введите еще раз: ");
                 }
             }
-            while (H != "да" & H != "нет");
+            while (havepet != "да" & havepet != "нет");
             if (anketa.HasPet == true)
             {
-                int i = 0;
+                int npet;
                 do
                 {
                     Console.Write("Введите сколько у Вас домашних животных: ");
-                    string s = Console.ReadLine();
-                    if (!IsAllDigits(s))
-                        Console.WriteLine("Это не число! Введите еще раз. ");
-                    else if (Int32.Parse(s) < 1)
-                        Console.WriteLine("Число должно быть больше 0. ");
-                    else 
-                        i = Int32.Parse(s);
+                    npet = Check();
                 }
-                while (i < 1);
-                anketa.PetName = Pets(i);
+                while (npet < 1);
+                anketa.PetName = Pets(npet);
             }
             else
                 anketa.PetName = new string[] { "" };
 
-            int j = 0;
+            int ncolor;
             do
             {
-                Console.Write("Сколько у Вас любимых цыетов? ");
-                string s = Console.ReadLine();
-                if (!IsAllDigits(s))
-                    Console.WriteLine("Это не число! Введите еще раз. ");
-                else if (Int32.Parse(s) < 1)
-                    Console.WriteLine("Число должно быть больше 0. ");
-                else
-                    j = Int32.Parse(s);
+                Console.Write("Сколько у Вас любимых цветов? ");
+                ncolor = Check();
             }
-            while (j < 1);
-            anketa.Color = Colors(j);
-            var result = (anketa.Name, anketa.LastName, anketa.Age, anketa.HasPet, anketa.PetName, anketa.Color);
-            return result;
-            
+            while (ncolor < 1);
+            anketa.Color = Colors(ncolor);
+            return anketa;
+
 
 
         }
-        static string[] Colors(int j)
+        static string[] Colors(int i)
         {
-            var favcol = new string[j];
-            for (j = 0; j < favcol.Length; j++)
+            var favcol = new string[i];
+            for (i = 0; i < favcol.Length; i++)
             {
-                Console.Write("Введите ваш любимый цвет №{0}: ", j + 1);
-                favcol[j] = Console.ReadLine();
+                do
+                {
+                    Console.Write("Введите ваш любимый цвет №{0}: ", i + 1);
+                    favcol[i] = Console.ReadLine();
+                }
+                while (!IsAllLetters(favcol[i]));
             }
             return favcol;
         }
-        static string[] Pets (int i)
+        static string[] Pets(int i)
         {
             var petname = new string[i];
             for (i = 0; i < petname.Length; i++)
             {
-                Console.Write("Введите кличку домашнего животного №{0}: ", i + 1);
-                petname[i] = Console.ReadLine();
+                do
+                {
+                    Console.Write("Введите кличку домашнего животного №{0}: ", i + 1);
+                    petname[i] = Console.ReadLine();
+                }
+                while (!IsAllLetters(petname[i]));
             }
             return petname;
         }
-        static bool IsAllDigits(string s)
+        static bool IsAllLetters(string s)
         {
-            int index;
+            int i;
             if (s.Length == 0)
+            {
+                Console.WriteLine("Поле не может быть пустым. Введите значение.");
                 return false;
-            for (index = 0; index < s.Length - 1; index++) ;
-            if (Char.IsDigit(s[index]) == false)
+            }
+            for (i = 0; i < s.Length; i++)
+            if (!Char.IsLetter(s[i]) && s[i] != ' ' && s[i] != '-')
+            {
+                Console.WriteLine("Допустимо введение только букв.");
+                return false;
+            }
+            return true;
+        }
+            static bool IsAllDigits(string s)
+        {
+            int i;
+            if (s.Length == 0)
+            {
+                Console.WriteLine("Поле не может быть пустым. Введите значение.");
+                return false;
+            }
+            for (i = 0; i < s.Length; i++)
+            if (Char.IsDigit(s[i]) == false)
                 return false;
             return true;
         }
@@ -149,7 +169,17 @@ namespace module5itog
             foreach (string colors in User.Color)
                 Console.WriteLine("\t{0}", colors);
         }
+        static int Check()
+        {
+            int i = 0;
+            string s = Console.ReadLine();
+            if (!IsAllDigits(s))
+                Console.WriteLine("Необходимо ввести положительное число! Введите еще раз. ");
+            else if (Int32.Parse(s) < 1)
+                Console.WriteLine("Число должно быть больше 0. ");
+            else
+                i = Int32.Parse(s);
+            return i;
+        }
     }
 }
-
-
